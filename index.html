@@ -4,7 +4,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Document</title>
+    <title>Esports</title>
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.1/dist/css/bootstrap.min.css" rel="stylesheet"
         integrity="sha384-4bw+/aepP/YC94hEpVNVgiZdgIC5+VKNBQNGCHeKRQN+PtmoHDEXuppvnDJzQIu9" crossorigin="anonymous">
 </head>
@@ -13,10 +13,11 @@
     <div class="container">
         <div class="row">
             <div class="col">
-                <h1>Películas</h1>
+                <h1 class="d-flex justify-content-center">Jugadores de Esports</h1>
+                </br></br>
             </div>
         </div>
-        <div class="row" id="contenedorPeliculas">
+        <div class="row" id="contenedorJugadores">
 
         </div>
     </div>
@@ -24,15 +25,14 @@
         <div class="modal-dialog">
             <div class="modal-content">
                 <div class="modal-header">
-                    <h1 class="modal-title fs-5" id="exampleModalLabel">Modal title</h1>
+                    <h1 class="modal-title fs-5" id="exampleModalLabel">Información de jugador</h1>
                     <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
                 </div>
                 <div class="modal-body">
 
                 </div>
                 <div class="modal-footer">
-                    <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
-                    <button type="button" class="btn btn-primary">Save changes</button>
+                    <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cerrar</button>
                 </div>
             </div>
         </div>
@@ -44,60 +44,88 @@
         integrity="sha384-Rx+T1VzGupg4BHQYs2gCW9It+akI2MM/mndMCy36UVfodzcJcF0GGLxZIzObiEfa"
         crossorigin="anonymous"></script>
     <script>
+        let jugadores = [];
+        fetch('./jugadores.json')
+            .then((data) => data.json())
+            .then((data) => {
+                jugadores = data.jugadores;
+                let contenedorJugadores = document.getElementById("contenedorJugadores");
+                for (let i = 0; i < jugadores.length; i++) {
+                    let image_url = document.createElement("img");
 
+                    image_url.src = jugadores[i].image_url;
+                    image_url.setAttribute("height", 200);
+                    image_url.setAttribute("width", 200);
 
-function verDetalles(pelicula) {
-    let tituloModal = document.getElementById("exampleModalLabel");
-    let imagenModal = document.getElementById("imagenModal");
+                    let divJugador = document.createElement("div");
 
-    // Fetch the JSON data
-    fetch('peliculas.json') // Replace 'movies.json' with the correct path to your JSON file
-        .then(response => response.json())
-        .then(data => {
-            tituloModal.innerHTML = data[pelicula].titulo;
-            imagenModal.src = data[pelicula].imagenUrl;
-        })
-        .catch(error => {
-            console.error('Error loading JSON file:', error);
-        });
-}
+                    let titulo = document.createElement("h3");
 
-let contenedorPeliculas = document.getElementById("contenedorPeliculas");
+                    titulo.innerHTML = jugadores[i].in_game_name;
 
-// Fetch the JSON data
-fetch('peliculas.json') // Replace 'movies.json' with the correct path to your JSON file
-    .then(response => response.json())
-    .then(data => {
-        for (let i = 0; i < data.length; i++) {
-            let divPelicula = document.createElement("div");
-            let titulo = document.createElement("h3");
-            let imagen = document.createElement("img");
+                    let team = document.createElement("p");
 
-            titulo.innerHTML = data[i].titulo;
-            imagen.src = data[i].imagenUrl;
-            imagen.alt = data[i].titulo;
+                    team.innerHTML = "<b>Equipo: </b>" + jugadores[i].team;
 
-            let director = document.createElement("p");
-            director.innerHTML = data[i].director;
-            let verMas = document.createElement("button");
-            verMas.innerHTML = "Ver mas";
-            verMas.classList.add("btn");
-            verMas.classList.add("btn-primary");
-            verMas.setAttribute("data-bs-toggle", "modal");
-            verMas.setAttribute("data-bs-target", "#exampleModal");
-            verMas.setAttribute("onclick", "verDetalles(" + i + ");");
+                    let age = document.createElement("p");
 
-            divPelicula.classList.add("col-3");
-            divPelicula.appendChild(titulo);
-            divPelicula.appendChild(imagen);
-            divPelicula.appendChild(director);
-            divPelicula.appendChild(verMas);
-            contenedorPeliculas.appendChild(divPelicula);
+                    age.innerHTML = "<b>Edad: </b>" + jugadores[i].age;
+
+                    let real_name = document.createElement("p");
+
+                    real_name.innerHTML = jugadores[i].real_name;
+
+                    let verMas = document.createElement("button");
+
+                    verMas.innerHTML = "Ver mas";
+
+                    let br = document.createElement("p");
+
+                    br.innerHTML = "<br /><br /><br /><br /><br />";
+
+                    verMas.classList.add("btn");
+                    verMas.classList.add("btn-primary");
+                    verMas.setAttribute("data-bs-toggle", "modal");
+                    verMas.setAttribute("data-bs-target", "#exampleModal");
+                    verMas.setAttribute("onclick", "verDetalles(" + i + ");")
+
+                    divJugador.classList.add("col-xl-2", "col-lg-3", "col-md-4", "col-sm-6", "col-6");
+
+                    divJugador.appendChild(image_url);
+                    divJugador.appendChild(titulo);
+                    divJugador.appendChild(team);
+                    divJugador.appendChild(age);
+                    divJugador.appendChild(verMas);
+                    divJugador.appendChild(br);
+                    contenedorJugadores.appendChild(divJugador);
+                }
+
+            })
+
+        /** 
+         * @param {number} jugador Indice del arreglo de jugadores
+        */
+        function verDetalles(idx) {
+            let tituloModal = document.getElementById("exampleModalLabel");
+            let modalBody = document.querySelector(".modal-body");
+            const jugador = jugadores[idx]
+
+            tituloModal.innerHTML = `${jugador.real_name} (${jugador.in_game_name})`;
+            modalBody.innerHTML = `
+                <img src="${jugador.image_url}" alt="${jugador.in_game_name}" width="200" height="200" align="right">
+                <p><b>Nombre real: </b> ${jugador.real_name}</p>
+                <p><b>Juego: </b> ${jugador.game}</p>
+                <p><b>Retirado: </b> ${jugador.isRetired}</p>
+                <p><b>Rol principal: </b> ${jugador.rolePlayed}</p>
+                <p><b>Año en que debutó: </b> ${jugador.debutYear}</p>
+            `;
+            /* ¡¡¡¡ Investigar como agregar el alt a un createElement !!!! */
+            /* Tratar de usar grids en el modal para que la imagen quede a la derecha y se más alineado */
         }
-    })
-    .catch(error => {
-        console.error('Error loading JSON file:', error);
-    });
+
+
+
+
     </script>
 </body>
 
